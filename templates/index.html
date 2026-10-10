@@ -1434,7 +1434,9 @@
                         <option value="out_of_stock" {% if status_filter=='out_of_stock' %}selected{% endif %}>🚫
                             អស់ពីស្តុក</option>
                         <option value="expiring_soon" {% if status_filter=='expiring_soon' %}selected{% endif %}>⏳
-                            ជិតផុតកំណត់ (≤ 60 ថ្ងៃ)</option>
+                            ជិតផុតកំណត់ (1–60 ថ្ងៃ)</option>
+                        <option value="expiring_today" {% if status_filter=='expiring_today' %}selected{% endif %}> ⚠️ 
+                            ផុតកំណត់ថ្ងៃនេះ (Expiring Today)</option>
                         <option value="expired" {% if status_filter=='expired' %}selected{% endif %}>❌ ផុតកំណត់ហើយ
                         </option>
                     </select>

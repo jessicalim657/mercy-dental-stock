@@ -285,6 +285,8 @@ def evaluate_status(item):
         days_left = (exp_date - today).days
         if days_left < 0:
             status_flags.append(('expired', f'ផុតកំណត់ ({abs(days_left)} ថ្ងៃមុន)', 'badge-danger'))
+        elif days_left == 0:
+            status_flags.append(('expiring_today', f'ផុតកំណត់ថ្ងៃនេះ', 'badge-danger'))
         elif days_left <= 60:
             status_flags.append(('expiring_soon', f'ជិតផុត ({days_left} ថ្ងៃទៀត)', 'badge-warning'))
         else:
@@ -548,6 +550,7 @@ def index():
     low_stock_count = 0
     expired_count = 0
     expiring_soon_count = 0
+    expiring_today_count = 0
 
     all_db_items = conn.execute('SELECT * FROM inventory WHERE is_deleted = 0').fetchall()
     for row in all_db_items:
@@ -563,6 +566,8 @@ def index():
             days_left = (exp_date - today).days
             if days_left < 0:
                 expired_count += 1
+            elif days_left == 0:
+                expiring_today_count += 1
             elif days_left <= 60:
                 expiring_soon_count += 1
         except (ValueError, TypeError):
@@ -669,6 +674,7 @@ def index():
         'reserve_buy_count': len(reserve_buy_items),
         'expired_count': expired_count,
         'expiring_soon_count': expiring_soon_count,
+        'expiring_today_count': expiring_today_count,
         'trash_count': len(trash_items),
         'this_month_usage': this_month_usage,
         'current_month_name': today.strftime('ខែ %m ឆ្នាំ %Y')
@@ -1686,7 +1692,8 @@ def print_inventory():
         'low_stock': '🛒 បញ្ជីសម្ភារៈត្រូវទិញ (សម្ភារៈជិតអស់ពីស្តុក)',
         'out_of_stock': '🚫 សម្ភារៈអស់ពីស្តុក (Out of Stock)',
         'expiring_soon': '⏳ សម្ភារៈជិតផុតកំណត់ (Expiring Soon)',
-        'expired': '❌ សម្ភារៈផុតកំណត់ (Expired)'
+        'expired': '❌ សម្ភារៈផុតកំណត់ (Expired)',
+        'expiring_today': '⚠️ សម្ភារៈផុតកំណត់ថ្ងៃនេះ (Expiring Today)'
     }
     status_title = status_labels.get(status_filter, '')
 
@@ -1742,6 +1749,7 @@ def export_csv():
         'low_stock': 'ជិតអស់ពីស្តុក_LowStock',
         'out_of_stock': 'អស់ពីស្តុក_OutOfStock',
         'expiring_soon': 'ជិតផុតកំណត់_ExpiringSoon',
+        'expiring_today': 'ផុតកំណត់ថ្ងៃនេះ_ExpiringToday',
         'expired': 'ផុតកំណត់_Expired'
     }
     filename_suffix = status_labels.get(status_filter, 'inventory')
